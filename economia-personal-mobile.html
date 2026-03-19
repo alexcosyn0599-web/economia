@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="miEconomía">
+<meta name="theme-color" content="#0d0f14">
+<title>miEconomía</title>
+<style>
+/* === SYSTEM FONTS — 100% OFFLINE === */
+:root {
+  --bg: #0d0f14;
+  --surface: #141720;
+  --surface2: #1a1f2e;
+  --border: #252b3b;
+  --accent: #c8f55a;
+  --accent2: #5af5c8;
+  --accent3: #f55a8c;
+  --text: #e8eaf0;
+  --muted: #6b7290;
+  --gold: #f5c84a;
+  --font-display: -apple-system-headline, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,245,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,245,90,0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* === INSTALL BANNER === */
+#installBanner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: var(--accent);
+  color: #0d0f14;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  padding-top: calc(10px + var(--safe-top));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+#installBanner .install-text { flex: 1; }
+#installBanner button {
+  background: #0d0f14;
+  color: var(--accent);
+  border: none;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 8px;
+}
+#installBanner .close-banner {
+  background: transparent;
+  color: rgba(13,15,20,0.6);
+  font-size: 1rem;
+  padding: 2px 8px;
+}
+
+/* === CONTAINER === */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-bottom: calc(80px + var(--safe-bottom));
+  position: relative;
+  z-index: 1;
+}
+
+/* === HEADER === */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-block h1 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.logo-block h1 span { color: var(--accent); }
+.logo-block p { color: var(--muted); font-size: 0.68rem; margin-top: 2px; }
+
+.month-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.month-selector select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 5px 8px;
+  border-radius: 6px;
+  outline: none;
+}
+
+/* === SALARY BANNER === */
+.salary-banner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.salary-card {
+  background: var(--surface);
+  padding: 14px 16px;
+}
+
+.salary-card:first-child {
+  background: var(--accent);
+  color: #0d0f14;
+  grid-column: 1 / -1;
+}
+
+.salary-card label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.salary-card:first-child label { color: rgba(13,15,20,0.55); }
+
+.salary-card .value {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.salary-card:first-child .value { color: #0d0f14; }
+
+.salary-card input[type="number"] {
+  background: transparent;
+  border: none;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0d0f14;
+  width: 100%;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.salary-card input::-webkit-outer-spin-button,
+.salary-card input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.salary-card .pct-bar {
+  margin-top: 6px;
+  height: 3px;
+  background: rgba(13,15,20,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.salary-card .pct-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* === ALERT === */
+.alert {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  margin-bottom: 14px;
+  display: none;
+  line-height: 1.4;
+}
+.alert.warn { background: rgba(245,200,74,0.12); border: 1px solid rgba(245,200,74,0.3); color: var(--gold); display: block; }
+.alert.danger { background: rgba(245,90,140,0.12); border: 1px solid rgba(245,90,140,0.3); color: var(--accent3); display: block; }
+.alert.ok { background: rgba(200,245,90,0.12); border: 1px solid rgba(200,245,90,0.3); color: var(--accent); display: block; }
+
+/* === TABS — bottom nav style for mobile === */
+.tabs {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding-bottom: var(--safe-bottom);
+  z-index: 100;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px 4px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s;
+  -webkit-touch-callout: none;
+}
+
+.tab-btn .tab-icon { font-size: 1.3rem; }
+.tab-btn.active { color: var(--accent); }
+.tab-btn.active .tab-icon { filter: drop-shadow(0 0 6px rgba(200,245,90,0.5)); }
+
+/* === SECTIONS === */
+.section { display: none; }
+.section.active { display: block; }
+
+/* === SECTION HEADER === */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-add {
+  background: var(--accent);
+  color: #0d0f14;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  font-weight: 600;
+  active-background: rgba(200,245,90,0.8);
+}
+
+/* === FIXED EXPENSES — cards on mobile === */
+.fixed-list { display: flex; flex-direction: column; gap: 8px; }
+
+.fixed-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.fixed-card-row1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fixed-card input[type="text"] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  outline: none;
+  flex: 1;
+  padding-bottom: 3px;
+}
+
+.fixed-card-row2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fixed-card select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 5px 8px;
+  border-radius: 6px;
+  outline: none;
+  flex: 1;
+}
+
+.fixed-amount-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  gap: 4px;
+}
+
+.fixed-amount-wrap span { color: var(--muted); font-size: 0.75rem; }
+
+.fixed-card input[type="number"] {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 80px;
+  outline: none;
+  -moz-appearance: textfield;
+  text-align: right;
+}
+
+.fixed-card input[type="number"]::-webkit-outer-spin-button,
+.fixed-card input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.fixed-pct {
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-align: right;
+  margin-top: 6px;
+}
+
+.btn-del {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--accent3);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* === CAT SUMMARY === */
+.cat-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.cat-card .cat-name {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.cat-card .cat-amt {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* === WEEKS === */
+.weeks-list { display: flex; flex-direction: column; gap: 12px; }
+
+.week-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.week-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.week-header-left { display: flex; align-items: center; gap: 10px; }
+.week-num {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  opacity: 0.4;
+}
+.week-label-text { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.week-header-total { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+
+.week-progress {
+  height: 2px;
+  background: var(--border);
+  overflow: hidden;
+}
+.week-progress-fill {
+  height: 100%;
+  background: var(--accent2);
+  transition: width 0.3s ease;
+}
+
+.week-body { padding: 8px 14px 14px; display: none; }
+.week-body.open { display: block; }
+
+.day-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(37,43,59,0.5);
+}
+.day-row:last-child { border-bottom: none; }
+
+.day-name {
+  font-size: 0.7rem;
+  color: var(--muted);
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.day-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  width: 80px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  outline: none;
+  -moz-appearance: textfield;
+  text-align: right;
+  flex-shrink: 0;
+}
+.day-input::-webkit-outer-spin-button,
+.day-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.day-note {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  flex: 1;
+  outline: none;
+  padding-bottom: 2px;
+  min-width: 0;
+}
+
+/* === AHORRO === */
+.ahorro-cards { display: flex; flex-direction: column; gap: 12px; }
+
+.ahorro-big {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 18px;
+}
+
+.ahorro-big h3 {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.big-number {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.big-number.negative { color: var(--accent3); }
+.ahorro-desc { font-size: 0.75rem; color: var(--muted); }
+
+.savings-goal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.savings-goal-card h3 {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.goal-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  margin-bottom: 12px;
+}
+.goal-input-wrap span { color: var(--muted); font-size: 0.82rem; }
+.goal-input-wrap input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex: 1;
+  outline: none;
+  -moz-appearance: textfield;
+}
+.goal-input-wrap input::-webkit-outer-spin-button,
+.goal-input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.progress-bar-big {
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.progress-bar-big-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+.goal-meta { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); }
+
+.add-savings-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.add-savings-row input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  outline: none;
+  flex: 1;
+  -moz-appearance: textfield;
+}
+.add-savings-row input::-webkit-outer-spin-button,
+.add-savings-row input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* === HISTORY === */
+.history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.history-month { font-size: 0.7rem; color: var(--muted); width: 72px; flex-shrink: 0; }
+.history-bar-wrap { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.history-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+.history-amt { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+
+/* === BREAKDOWN ROWS === */
+.breakdown-rows { display: flex; flex-direction: column; gap: 10px; }
+.breakdown-row { display: flex; align-items: center; gap: 10px; }
+.breakdown-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.breakdown-label { font-size: 0.75rem; flex: 1; }
+.breakdown-bar-wrap { flex: 2; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.breakdown-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+.breakdown-pct { font-size: 0.72rem; color: var(--muted); width: 36px; text-align: right; }
+.breakdown-amt { font-family: var(--font-display); font-size: 0.8rem; font-weight: 600; width: 64px; text-align: right; }
+
+/* === RESUMEN CARDS === */
+.resumen-grid { display: flex; flex-direction: column; gap: 12px; }
+.overview-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.overview-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* === STATUS BAR === */
+.status-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: rgba(13,15,20,0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  padding-top: calc(8px + var(--safe-top));
+  display: flex;
+  justify-content: space-around;
+  z-index: 99;
+  font-size: 0.68rem;
+}
+
+.status-item { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--muted); }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; }
+.status-val { font-family: var(--font-display); font-weight: 700; color: var(--text); font-size: 0.8rem; }
+
+/* push content below status bar */
+.top-spacer { height: 52px; }
+</style>
+</head>
+<body>
+
+<!-- STATUS BAR TOP -->
+<div class="status-bar">
+  <div class="status-item">
+    <div class="status-dot" style="background:var(--accent3)"></div>
+    <div class="status-val" id="sb-fixed">0€</div>
+    <span>Fijos</span>
+  </div>
+  <div class="status-item">
+    <div class="status-dot" style="background:var(--accent2)"></div>
+    <div class="status-val" id="sb-leisure">0€</div>
+    <span>Ocio</span>
+  </div>
+  <div class="status-item">
+    <div class="status-dot" style="background:var(--accent)"></div>
+    <div class="status-val" id="sb-savings">0€</div>
+    <span>Ahorro</span>
+  </div>
+  <div class="status-item">
+    <div class="status-dot" style="background:var(--muted)"></div>
+    <div class="status-val" id="sb-salary">0€</div>
+    <span>Sueldo</span>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="installBanner" style="display:none; margin-top:calc(52px + var(--safe-top))">
+  <span class="install-text" id="installText">Añade esta app a tu pantalla de inicio</span>
+  <button id="installBtn" style="display:none">Instalar</button>
+  <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none'">✕</button>
+</div>
+
+<div class="container">
+  <div class="top-spacer"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-block">
+      <h1>mi<span>€</span>con</h1>
+      <p>Economía personal · offline</p>
+    </div>
+    <div class="month-selector">
+      <select id="monthSelect"></select>
+      <select id="yearSelect"></select>
+    </div>
+  </header>
+
+  <!-- SALARY BANNER -->
+  <div class="salary-banner">
+    <div class="salary-card">
+      <label>Sueldo neto mensual (€)</label>
+      <input type="number" id="salary" placeholder="0" inputmode="decimal">
+    </div>
+    <div class="salary-card">
+      <label>Gastos fijos</label>
+      <div class="value" id="totalFixed">0 €</div>
+      <div class="pct-bar"><div class="pct-fill" id="pctFixed" style="background:var(--accent3);width:0%"></div></div>
+    </div>
+    <div class="salary-card">
+      <label>Ocio del mes</label>
+      <div class="value" id="totalLeisure">0 €</div>
+      <div class="pct-bar"><div class="pct-fill" id="pctLeisure" style="background:var(--accent2);width:0%"></div></div>
+    </div>
+    <div class="salary-card">
+      <label>Ahorro estimado</label>
+      <div class="value" id="totalSavings">0 €</div>
+      <div class="pct-bar"><div class="pct-fill" id="pctSavings" style="background:var(--accent);width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- ALERT -->
+  <div id="mainAlert" class="alert"></div>
+
+  <!-- ===== GASTOS FIJOS ===== -->
+  <div id="tab-fijos" class="section active">
+    <div class="section-header">
+      <div class="section-title">Gastos Fijos</div>
+      <button class="btn-add" onclick="addFixedRow()">+ Añadir</button>
+    </div>
+    <div class="fixed-list" id="fixedList"></div>
+    <div class="cat-summary" id="catSummary"></div>
+  </div>
+
+  <!-- ===== OCIO SEMANAL ===== -->
+  <div id="tab-ocio" class="section">
+    <div class="section-header">
+      <div class="section-title">Ocio Semanal</div>
+      <div style="font-size:0.72rem;color:var(--muted)">Budget/semana: <strong id="weekBudgetLabel" style="color:var(--text)">0€</strong></div>
+    </div>
+    <div class="weeks-list" id="weeksList"></div>
+    <div class="overview-section" style="margin-top:12px">
+      <div class="overview-title">Resumen mensual ocio</div>
+      <div class="breakdown-rows" id="leisureBreakdown"></div>
+    </div>
+  </div>
+
+  <!-- ===== AHORRO ===== -->
+  <div id="tab-ahorro" class="section">
+    <div class="ahorro-cards">
+      <div class="ahorro-big">
+        <h3>Ahorro estimado este mes</h3>
+        <div class="big-number" id="savingsAmt">0 €</div>
+        <div class="ahorro-desc" id="savingsDesc">Introduce tu sueldo y gastos</div>
+        <div style="margin-top:16px">
+          <div class="overview-title" style="margin-bottom:10px">Distribución del presupuesto</div>
+          <div class="breakdown-rows" id="budgetBreakdown"></div>
+        </div>
+      </div>
+
+      <div class="savings-goal-card">
+        <h3>Objetivo de ahorro</h3>
+        <div class="goal-input-wrap">
+          <span>€</span>
+          <input type="number" id="savingsGoal" placeholder="Ej: 5000" inputmode="decimal">
+        </div>
+        <div class="progress-bar-big">
+          <div class="progress-bar-big-fill" id="goalProgress" style="width:0%"></div>
+        </div>
+        <div class="goal-meta">
+          <span id="goalAccum">Acumulado: 0 €</span>
+          <span id="goalPct">0%</span>
+        </div>
+        <div class="add-savings-row">
+          <input type="number" id="addSavings" placeholder="€ ahorrado este mes" inputmode="decimal">
+          <button class="btn-add" onclick="saveMonthlySavings()">Guardar</button>
+        </div>
+      </div>
+
+      <div class="savings-goal-card">
+        <h3>Historial de ahorros</h3>
+        <div class="history-list" id="savingsHistory"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESUMEN ===== -->
+  <div id="tab-resumen" class="section">
+    <div class="resumen-grid">
+      <div class="overview-section">
+        <div class="overview-title">Desglose del mes</div>
+        <div class="breakdown-rows" id="fullBreakdown"></div>
+      </div>
+      <div class="overview-section">
+        <div class="overview-title">Gastos fijos por categoría</div>
+        <div class="breakdown-rows" id="catBreakdown"></div>
+      </div>
+      <div class="overview-section">
+        <div class="overview-title">Semana a semana — Ocio</div>
+        <div class="breakdown-rows" id="weekBreakdown"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('fijos',this)">
+    <span class="tab-icon">📋</span>Fijos
+  </button>
+  <button class="tab-btn" onclick="showTab('ocio',this)">
+    <span class="tab-icon">🎉</span>Ocio
+  </button>
+  <button class="tab-btn" onclick="showTab('ahorro',this)">
+    <span class="tab-icon">💰</span>Ahorro
+  </button>
+  <button class="tab-btn" onclick="showTab('resumen',this)">
+    <span class="tab-icon">📊</span>Resumen
+  </button>
+</div>
+
+<script>
+// ===========================
+//  CONSTANTS
+// ===========================
+const CATEGORIES = {
+  vivienda:    { label: 'Vivienda',      color: '#5a8cf5' },
+  alimentacion:{ label: 'Alimentación',  color: '#f5a45a' },
+  transporte:  { label: 'Transporte',    color: '#c85af5' },
+  salud:       { label: 'Salud',         color: '#5af5a4' },
+  servicios:   { label: 'Servicios',     color: '#f5e05a' },
+  suscripciones:{ label: 'Suscripciones',color: '#5af0f5' },
+  educacion:   { label: 'Educación',     color: '#f55a5a' },
+  otros:       { label: 'Otros',         color: '#8c8c8c' },
+};
+
+const DAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// ===========================
+//  STATE
+// ===========================
+let state = {};
+try { state = JSON.parse(localStorage.getItem('mieconomia') || '{}'); } catch {}
+
+function saveState() {
+  try { localStorage.setItem('mieconomia', JSON.stringify(state)); } catch(e) { console.warn('Storage full', e); }
+}
+
+function getKey() {
+  return `${document.getElementById('yearSelect').value}-${document.getElementById('monthSelect').value}`;
+}
+
+function getMonthData() {
+  const k = getKey();
+  if (!state[k]) {
+    state[k] = {
+      salary: 0,
+      fixed: [
+        { id: 1, name: 'Alquiler / Hipoteca', cat: 'vivienda', amount: 0 },
+        { id: 2, name: 'Luz / Gas / Agua', cat: 'servicios', amount: 0 },
+        { id: 3, name: 'Internet / Móvil', cat: 'servicios', amount: 0 },
+        { id: 4, name: 'Supermercado', cat: 'alimentacion', amount: 0 },
+        { id: 5, name: 'Transporte', cat: 'transporte', amount: 0 },
+      ],
+      leisure: Array.from({length:4}, () => DAYS.map(d => ({ day: d, amount: 0, note: '' }))),
+      savingsGoal: 0,
+      savedHistory: [],
+    };
+  }
+  return state[k];
+}
+
+// ===========================
+//  INIT
+// ===========================
+window.addEventListener('load', () => {
+  // Month/year selects
+  const ms = document.getElementById('monthSelect');
+  const ys = document.getElementById('yearSelect');
+  const now = new Date();
+  MONTHS.forEach((m,i) => { const o = document.createElement('option'); o.value=i; o.textContent=m; ms.appendChild(o); });
+  ms.value = now.getMonth();
+  for (let y = now.getFullYear()-2; y <= now.getFullYear()+1; y++) {
+    const o = document.createElement('option'); o.value=y; o.textContent=y; ys.appendChild(o);
+  }
+  ys.value = now.getFullYear();
+  ms.addEventListener('change', renderAll);
+  ys.addEventListener('change', renderAll);
+
+  document.getElementById('salary').addEventListener('input', e => {
+    const d = getMonthData(); d.salary = parseFloat(e.target.value)||0; saveState(); updateTotals();
+  });
+  document.getElementById('savingsGoal').addEventListener('input', e => {
+    const d = getMonthData(); d.savingsGoal = parseFloat(e.target.value)||0; saveState(); updateSavingsGoal();
+  });
+
+  setupInstallBanner();
+  renderAll();
+});
+
+function renderAll() {
+  const d = getMonthData();
+  document.getElementById('salary').value = d.salary || '';
+  document.getElementById('savingsGoal').value = d.savingsGoal || '';
+  renderFixed();
+  renderLeisure();
+  updateTotals();
+  renderSavingsHistory();
+}
+
+// ===========================
+//  TABS
+// ===========================
+function showTab(tab, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===========================
+//  GASTOS FIJOS
+// ===========================
+function renderFixed() {
+  const d = getMonthData();
+  const list = document.getElementById('fixedList');
+  list.innerHTML = '';
+  d.fixed.forEach(row => {
+    const card = document.createElement('div');
+    card.className = 'fixed-card';
+    card.innerHTML = `
+      <div class="fixed-card-row1">
+        <input type="text" value="${row.name}" placeholder="Concepto" onchange="updateFixed(${row.id},'name',this.value)">
+        <button class="btn-del" onclick="deleteFixed(${row.id})">✕</button>
+      </div>
+      <div class="fixed-card-row2">
+        <select onchange="updateFixed(${row.id},'cat',this.value)">
+          ${Object.entries(CATEGORIES).map(([k,v])=>`<option value="${k}" ${row.cat===k?'selected':''}>${v.label}</option>`).join('')}
+        </select>
+        <div class="fixed-amount-wrap">
+          <span>€</span>
+          <input type="number" value="${row.amount||''}" placeholder="0" inputmode="decimal"
+            onchange="updateFixed(${row.id},'amount',parseFloat(this.value)||0)">
+        </div>
+      </div>
+      <div class="fixed-pct" id="pct-${row.id}"></div>
+    `;
+    list.appendChild(card);
+  });
+  updateTotals();
+}
+
+function addFixedRow() {
+  const d = getMonthData();
+  d.fixed.push({ id: Date.now(), name: '', cat: 'otros', amount: 0 });
+  saveState(); renderFixed();
+}
+
+function deleteFixed(id) {
+  const d = getMonthData();
+  d.fixed = d.fixed.filter(r => r.id !== id);
+  saveState(); renderFixed(); updateTotals();
+}
+
+function updateFixed(id, field, val) {
+  const d = getMonthData();
+  const row = d.fixed.find(r => r.id === id);
+  if (row) row[field] = val;
+  saveState(); updateTotals();
+}
+
+// ===========================
+//  OCIO SEMANAL
+// ===========================
+function renderLeisure() {
+  const d = getMonthData();
+  const list = document.getElementById('weeksList');
+  list.innerHTML = '';
+  d.leisure.forEach((week, wi) => {
+    const weekTotal = week.reduce((s,r)=>s+(r.amount||0),0);
+    const card = document.createElement('div');
+    card.className = 'week-card';
+    card.innerHTML = `
+      <div class="week-progress"><div class="week-progress-fill" id="week-${wi}-prog" style="width:0%"></div></div>
+      <div class="week-header" onclick="toggleWeek(${wi})">
+        <div class="week-header-left">
+          <div class="week-num">${wi+1}</div>
+          <div class="week-label-text">Semana ${wi+1}</div>
+        </div>
+        <div class="week-header-total" id="week-${wi}-total">${weekTotal.toFixed(2)} €</div>
+      </div>
+      <div class="week-body ${wi===0?'open':''}" id="week-${wi}-body">
+        ${week.map((day,di) => `
+          <div class="day-row">
+            <span class="day-name">${day.day}</span>
+            <input class="day-input" type="number" value="${day.amount||''}" placeholder="0" inputmode="decimal"
+              onchange="updateDay(${wi},${di},'amount',parseFloat(this.value)||0)">
+            <input class="day-note" type="text" value="${day.note||''}" placeholder="nota…"
+              onchange="updateDay(${wi},${di},'note',this.value)">
+          </div>
+        `).join('')}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function toggleWeek(wi) {
+  const body = document.getElementById(`week-${wi}-body`);
+  body.classList.toggle('open');
+}
+
+function updateDay(wi, di, field, val) {
+  const d = getMonthData();
+  d.leisure[wi][di][field] = val;
+  saveState();
+  const weekTotal = d.leisure[wi].reduce((s,r)=>s+(r.amount||0),0);
+  const el = document.getElementById(`week-${wi}-total`);
+  if (el) el.textContent = weekTotal.toFixed(2)+' €';
+  const totalLeisure = d.leisure.flat().reduce((s,r)=>s+(r.amount||0),0);
+  const budget = totalLeisure/4;
+  const pct = budget>0 ? Math.min(100,(weekTotal/budget)*100) : 0;
+  const prog = document.getElementById(`week-${wi}-prog`);
+  if (prog) { prog.style.width=pct+'%'; prog.style.background=pct>100?'var(--accent3)':'var(--accent2)'; }
+  updateTotals();
+}
+
+// ===========================
+//  TOTALS
+// ===========================
+function updateTotals() {
+  const d = getMonthData();
+  const salary = d.salary||0;
+  const totalFixed = d.fixed.reduce((s,r)=>s+(r.amount||0),0);
+  const totalLeisure = d.leisure.flat().reduce((s,r)=>s+(r.amount||0),0);
+  const savings = salary - totalFixed - totalLeisure;
+
+  // pct per row
+  d.fixed.forEach(row => {
+    const el = document.getElementById(`pct-${row.id}`);
+    if (el) el.textContent = salary>0 ? `${((row.amount/salary)*100).toFixed(1)}% del sueldo` : '';
+  });
+
+  // banner
+  document.getElementById('totalFixed').textContent = totalFixed.toFixed(2)+' €';
+  document.getElementById('totalLeisure').textContent = totalLeisure.toFixed(2)+' €';
+  document.getElementById('totalSavings').textContent = savings.toFixed(2)+' €';
+
+  const pf = salary>0 ? Math.min(100,(totalFixed/salary)*100) : 0;
+  const pl = salary>0 ? Math.min(100,(totalLeisure/salary)*100) : 0;
+  const ps = salary>0 ? Math.max(0,(savings/salary)*100) : 0;
+
+  document.getElementById('pctFixed').style.width = pf+'%';
+  document.getElementById('pctLeisure').style.width = pl+'%';
+  document.getElementById('pctSavings').style.width = ps+'%';
+
+  // status bar
+  document.getElementById('sb-fixed').textContent = totalFixed.toFixed(0)+'€';
+  document.getElementById('sb-leisure').textContent = totalLeisure.toFixed(0)+'€';
+  document.getElementById('sb-savings').textContent = savings.toFixed(0)+'€';
+  document.getElementById('sb-salary').textContent = salary.toFixed(0)+'€';
+
+  // alert
+  const alertEl = document.getElementById('mainAlert');
+  const total = totalFixed + totalLeisure;
+  if (salary>0 && total>salary) {
+    alertEl.className='alert danger';
+    alertEl.textContent=`⚠️ Gastos (${total.toFixed(0)}€) > sueldo (${salary.toFixed(0)}€). Déficit ${(total-salary).toFixed(0)}€.`;
+  } else if (salary>0 && ps<10 && ps>=0) {
+    alertEl.className='alert warn';
+    alertEl.textContent=`💡 Ahorro bajo: ${ps.toFixed(1)}%. Intenta llegar al 10-20%.`;
+  } else if (salary>0 && ps>=20) {
+    alertEl.className='alert ok';
+    alertEl.textContent=`✅ Ahorrando el ${ps.toFixed(1)}% este mes. ¡Muy bien!`;
+  } else { alertEl.className='alert'; alertEl.textContent=''; }
+
+  // ahorro tab
+  const savEl = document.getElementById('savingsAmt');
+  if (savEl) {
+    savEl.textContent = savings.toFixed(2)+' €';
+    savEl.className = 'big-number'+(savings<0?' negative':'');
+    document.getElementById('savingsDesc').textContent = savings>=0
+      ? `${ps.toFixed(1)}% de tu sueldo mensual`
+      : `Gastas ${Math.abs(savings).toFixed(2)}€ más de lo que ingresas`;
+  }
+
+  // categories
+  const cats = {};
+  d.fixed.forEach(r => { if(!cats[r.cat])cats[r.cat]=0; cats[r.cat]+=r.amount||0; });
+  const catSummary = document.getElementById('catSummary');
+  if (catSummary) {
+    catSummary.innerHTML = Object.entries(cats).filter(([,v])=>v>0).map(([k,v])=>`
+      <div class="cat-card">
+        <div class="cat-name" style="color:${CATEGORIES[k]?.color}">${CATEGORIES[k]?.label||k}</div>
+        <div class="cat-amt" style="color:${CATEGORIES[k]?.color}">${v.toFixed(2)} €</div>
+        ${salary>0?`<div style="font-size:0.65rem;color:var(--muted);margin-top:3px">${((v/salary)*100).toFixed(1)}%</div>`:''}
+      </div>`).join('');
+  }
+
+  // week budget label
+  const wbl = document.getElementById('weekBudgetLabel');
+  if (wbl) wbl.textContent = (totalLeisure/4).toFixed(2)+'€';
+
+  // week progress bars
+  d.leisure.forEach((_,wi)=>{
+    const wt = d.leisure[wi].reduce((s,r)=>s+(r.amount||0),0);
+    const budget = totalLeisure/4;
+    const pct = budget>0?Math.min(100,(wt/budget)*100):0;
+    const prog = document.getElementById(`week-${wi}-prog`);
+    if (prog) { prog.style.width=pct+'%'; prog.style.background=pct>100?'var(--accent3)':'var(--accent2)'; }
+  });
+
+  // leisure breakdown
+  const lb = document.getElementById('leisureBreakdown');
+  if (lb) {
+    const wts = d.leisure.map((w,i)=>({label:`Semana ${i+1}`,val:w.reduce((s,r)=>s+(r.amount||0),0)}));
+    const max = Math.max(...wts.map(w=>w.val),1);
+    lb.innerHTML = wts.map(w=>`
+      <div class="breakdown-row">
+        <div class="breakdown-dot" style="background:var(--accent2)"></div>
+        <div class="breakdown-label">${w.label}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar-fill" style="background:var(--accent2);width:${(w.val/max)*100}%"></div></div>
+        <div class="breakdown-pct">${totalLeisure>0?((w.val/totalLeisure)*100).toFixed(0):'0'}%</div>
+        <div class="breakdown-amt">${w.val.toFixed(2)} €</div>
+      </div>`).join('');
+  }
+
+  // budget breakdown (ahorro)
+  const bb = document.getElementById('budgetBreakdown');
+  if (bb && salary>0) {
+    bb.innerHTML = [
+      {label:'Fijos',val:totalFixed,color:'var(--accent3)'},
+      {label:'Ocio',val:totalLeisure,color:'var(--accent2)'},
+      {label:'Ahorro',val:Math.max(0,savings),color:'var(--accent)'},
+    ].map(it=>`
+      <div class="breakdown-row">
+        <div class="breakdown-dot" style="background:${it.color}"></div>
+        <div class="breakdown-label">${it.label}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar-fill" style="background:${it.color};width:${((it.val/salary)*100).toFixed(1)}%"></div></div>
+        <div class="breakdown-pct">${((it.val/salary)*100).toFixed(1)}%</div>
+        <div class="breakdown-amt">${it.val.toFixed(2)} €</div>
+      </div>`).join('');
+  }
+
+  // full breakdown (resumen)
+  const fb = document.getElementById('fullBreakdown');
+  if (fb && salary>0) {
+    fb.innerHTML = [
+      {label:'Sueldo',val:salary,color:'var(--accent)',w:100},
+      {label:'Fijos',val:totalFixed,color:'var(--accent3)',w:pf},
+      {label:'Ocio',val:totalLeisure,color:'var(--accent2)',w:pl},
+      {label:'Ahorro',val:savings,color:savings>=0?'var(--accent)':'var(--accent3)',w:ps},
+    ].map(it=>`
+      <div class="breakdown-row">
+        <div class="breakdown-dot" style="background:${it.color}"></div>
+        <div class="breakdown-label">${it.label}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar-fill" style="background:${it.color};width:${it.w}%"></div></div>
+        <div class="breakdown-pct">${it.w.toFixed(1)}%</div>
+        <div class="breakdown-amt">${it.val.toFixed(2)} €</div>
+      </div>`).join('');
+  }
+
+  // cat breakdown (resumen)
+  const catB = document.getElementById('catBreakdown');
+  if (catB) {
+    const maxCat = Math.max(...Object.values(cats),1);
+    catB.innerHTML = Object.entries(cats).filter(([,v])=>v>0).map(([k,v])=>`
+      <div class="breakdown-row">
+        <div class="breakdown-dot" style="background:${CATEGORIES[k]?.color}"></div>
+        <div class="breakdown-label">${CATEGORIES[k]?.label||k}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar-fill" style="background:${CATEGORIES[k]?.color};width:${(v/maxCat)*100}%"></div></div>
+        <div class="breakdown-pct">${salary>0?((v/salary)*100).toFixed(1):'0'}%</div>
+        <div class="breakdown-amt">${v.toFixed(2)} €</div>
+      </div>`).join('');
+  }
+
+  // week breakdown (resumen)
+  const wb2 = document.getElementById('weekBreakdown');
+  if (wb2) {
+    const wts2 = d.leisure.map((w,i)=>({label:`Semana ${i+1}`,val:w.reduce((s,r)=>s+(r.amount||0),0)}));
+    const maxW = Math.max(...wts2.map(w=>w.val),1);
+    wb2.innerHTML = wts2.map(w=>`
+      <div class="breakdown-row">
+        <div class="breakdown-dot" style="background:var(--accent2)"></div>
+        <div class="breakdown-label">${w.label}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar-fill" style="background:var(--accent2);width:${(w.val/maxW)*100}%"></div></div>
+        <div class="breakdown-pct"></div>
+        <div class="breakdown-amt">${w.val.toFixed(2)} €</div>
+      </div>`).join('');
+  }
+
+  updateSavingsGoal();
+}
+
+// ===========================
+//  AHORRO
+// ===========================
+function updateSavingsGoal() {
+  const d = getMonthData();
+  const salary = d.salary||0;
+  const totalFixed = d.fixed.reduce((s,r)=>s+(r.amount||0),0);
+  const totalLeisure = d.leisure.flat().reduce((s,r)=>s+(r.amount||0),0);
+  const monthlySavings = Math.max(0, salary-totalFixed-totalLeisure);
+  const goal = d.savingsGoal||0;
+  const accum = d.savedHistory.reduce((s,h)=>s+h.amt,0)+monthlySavings;
+  const pct = goal>0 ? Math.min(100,(accum/goal)*100) : 0;
+  const ga = document.getElementById('goalAccum');
+  const gp = document.getElementById('goalPct');
+  const gprog = document.getElementById('goalProgress');
+  if (ga) ga.textContent = `Acumulado: ${accum.toFixed(2)} €`;
+  if (gp) gp.textContent = `${pct.toFixed(1)}%`;
+  if (gprog) gprog.style.width = pct+'%';
+}
+
+function saveMonthlySavings() {
+  const d = getMonthData();
+  const val = parseFloat(document.getElementById('addSavings').value)||0;
+  if (val<=0) return;
+  const key = getKey();
+  const label = MONTHS[parseInt(document.getElementById('monthSelect').value)]+' '+document.getElementById('yearSelect').value;
+  const existing = d.savedHistory.find(h=>h.key===key);
+  if (existing) existing.amt=val; else d.savedHistory.push({key,label,amt:val});
+  saveState();
+  document.getElementById('addSavings').value='';
+  renderSavingsHistory();
+  updateSavingsGoal();
+}
+
+function renderSavingsHistory() {
+  const d = getMonthData();
+  const container = document.getElementById('savingsHistory');
+  if (!container) return;
+  if (!d.savedHistory.length) {
+    container.innerHTML='<div style="font-size:0.75rem;color:var(--muted)">Sin historial todavía</div>';
+    return;
+  }
+  const max = Math.max(...d.savedHistory.map(h=>h.amt));
+  container.innerHTML = d.savedHistory.slice().reverse().map(h=>`
+    <div class="history-item">
+      <div class="history-month">${h.label}</div>
+      <div class="history-bar-wrap"><div class="history-bar-fill" style="width:${(h.amt/max)*100}%"></div></div>
+      <div class="history-amt">${h.amt.toFixed(2)} €</div>
+    </div>`).join('');
+}
+
+// ===========================
+//  INSTALL BANNER (PWA-lite)
+// ===========================
+function setupInstallBanner() {
+  const banner = document.getElementById('installBanner');
+  const installBtn = document.getElementById('installBtn');
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+  if (isStandalone) return; // already installed
+
+  // Android: catch beforeinstallprompt
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installText').textContent = 'Instala la app en tu Android';
+    installBtn.style.display = 'block';
+    banner.style.display = 'flex';
+    installBtn.addEventListener('click', async () => {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      banner.style.display = 'none';
+    });
+  });
+
+  // iOS: show instructions
+  if (isIOS) {
+    document.getElementById('installText').textContent = 'iPhone: pulsa ⎙ → "Añadir a inicio"';
+    banner.style.display = 'flex';
+  } else if (isAndroid && !deferredPrompt) {
+    // Android fallback (Chrome might not fire event on local file)
+    document.getElementById('installText').textContent = 'Android: menú ⋮ → "Añadir a pantalla de inicio"';
+    banner.style.display = 'flex';
+  }
+}
+</script>
+</body>
+</html>
